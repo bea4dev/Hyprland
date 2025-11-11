@@ -73,7 +73,8 @@ void CSurfacePassElement::draw(const CRegion& damage) {
     }
 
     const bool MISALIGNEDFSV1 = std::floor(m_data.pMonitor->m_scale) != m_data.pMonitor->m_scale /* Fractional */ && m_data.surface->m_current.scale == 1 /* fs protocol */ &&
-        windowBox.size() != m_data.surface->m_current.bufferSize /* misaligned */ && DELTALESSTHAN(windowBox.width, m_data.surface->m_current.bufferSize.x, 3) &&
+        !m_data.surface->m_current.viewport.hasDestination /* not fractional viewport */ && windowBox.size() != m_data.surface->m_current.bufferSize /* misaligned */ &&
+        DELTALESSTHAN(windowBox.width, m_data.surface->m_current.bufferSize.x, 3) &&
         DELTALESSTHAN(windowBox.height, m_data.surface->m_current.bufferSize.y, 3) /* off by one-or-two */ &&
         (!m_data.pWindow || (!m_data.pWindow->m_realSize->isBeingAnimated() && !INTERACTIVERESIZEINPROGRESS)) /* not window or not animated/resizing */ &&
         (!m_data.pLS || (!m_data.pLS->m_realSize->isBeingAnimated())); /* not LS or not animated */
