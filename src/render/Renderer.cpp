@@ -1133,10 +1133,15 @@ void CHyprRenderer::calculateUVForSurface(PHLWINDOW pWindow, SP<CWLSurfaceResour
         if (projSize != Vector2D{} && fixMisalignedFSV1) {
             // instead of nearest_neighbor (we will repeat / skip)
             // just cut off / expand surface
-            const Vector2D PIXELASUV    = Vector2D{1, 1} / pSurface->m_current.bufferSize;
-            const Vector2D MISALIGNMENT = pSurface->m_current.bufferSize - projSize;
-            if (MISALIGNMENT != Vector2D{})
+            const Vector2D PIXELASUV   = Vector2D{1, 1} / pSurface->m_current.bufferSize;
+            const auto&    BUFFER_SIZE = pSurface->m_current.bufferSize;
+
+            // compute MISALIGN from the adjusted UV coordinates.
+            const Vector2D MISALIGNMENT = (uvBR - uvTL) * BUFFER_SIZE - projSize;
+
+            if (MISALIGNMENT != Vector2D{}) {
                 uvBR -= MISALIGNMENT * PIXELASUV;
+            }
         } else {
             // if the surface is smaller than our viewport, extend its edges.
             // this will break if later on xdg geometry is hit, but we really try
